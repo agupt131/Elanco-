@@ -1,0 +1,213 @@
+# All the steps are perfomred based on the drug sample csv file.
+# Python manuplication steps.
+
+import pandas as pd
+import numpy as np
+from pandas import Series,DataFrame
+# star_rating['Contract_Number']=star_rating.Contract_Number.astype(str)
+# star_rating.dtypes --- To find out the data types
+
+#Step 1 To read the csv file.
+star_rating = pd.read_csv(r"C:\\Users\\user\\Desktop\\Book1.csv",usecols=['Contract Number','Organization Type','Contract Name','HD3: Member Experience with Health Plan','DD2: Member Complaints and Changes in the Drug Plan Performance','Date'],na_values=['.','??']);
+star_rating.columns = star_rating.columns.str.replace(' ','_')(#Replace all column name space with_)
+# star_rating.head()
+# star_rating.columns
+# star_rating['Organization_Type'].head()
+    
+#Step 2 To remove the dulicates rows from the csv file.
+star_rating1=star_rating.drop_duplicates(keep='last')
+star_rating1
+    
+# Step 3 To apply filter condition & removing nulls
+star_rating2 = star_rating1[(star_rating1['Organization_Type']!='Local CCP') & (star_rating1['Organization_Type']!='null')]
+# star_rating2.head(50)
+# star_rating2.dropna(axis=0,inplace=True)
+    
+# Step 4 - Fill any values inplace of blanks and export the csv to other csv.
+star_rating2.fillna(value="False_data",inplace=True)
+star_rating2.to_csv("C:\\Users\\user\\Desktop\\Book5.csv",index=False);
+
+# Step 5 This query is also remove the dulpicates.
+# star_rating1=star_rating.loc[~star_rating.duplicated(),:]
+# star_rating1
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+star_rating_exe2 = pd.read_csv(r"C:\\Users\\anuj.gupta04\\Desktop\\personal\\Book2.csv")
+#step1 To remove the column use axis = 1 and for row use axis = 0
+star_rating_exe2.drop('Contract_Name',axis =1,inplace = True)
+star_rating_exe2.drop([0,20],axis=0, inplace = True) #i.e index number 0 and 20th row is dropped.
+
+#step 2 To sort the data using sort_value
+star_rating_exe2.Organization_Type.sort_values()
+#2b Sort values using multiple columns
+star_rating_exe2.sort_values(['Organization_Type','Date'])
+star_rating_exe2
+
+# STEP 3 RENAMING OF COULMNS
+star_rating_exe2.rename(columns = {'DD2:_Member_Complaints_and_Changes_in_the_Drug_Plan_Performance':'Drugperformance'},inplace= True)
+star_rating_exe2
+
+#Step 4 Filter only those drugs which is having rating 5
+# Here is drugperformance column we have strings and int both so we need to convert it full to int
+#logic.
+star_rating_exe2.Drugperformance[star_rating_exe2.Drugperformance == 'Plan too new to be measured']=1 
+star_rating_exe2.Drugperformance[star_rating_exe2.Drugperformance == 'Not enough data available'] =2
+star_rating_exe2.Drugperformance[star_rating_exe2.Drugperformance == 'Plan not required to report measure'] =3
+star_rating_exe3 = star_rating_exe2
+#star_rating_exe3
+
+#Now change the data type 
+star_rating_exe3["Drugperformance"]=star_rating_exe3["Drugperformance"].astype(int)
+#star_rating_exe3.dtypes
+
+#Now apply condition
+star_rating_exe3[star_rating_exe3["Drugperformance"] ==5]
+star_rating_exe3
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+star_rating_exe3 = pd.read_csv(r"C:\\Users\\anuj.gupta04\\Desktop\\personal\\Book3.csv")
+#Apply multiple filters in pandas DF
+star_rating_exe4=star_rating_exe3[star_rating_exe3.Contract_Number.isin(['H0602','H1607'])]
+
+
+#How to remove the non-numeric column from a dataframe
+star_rating_exe3.dtypes #Here Drugperformance only having numeric data rest all columns need to drop
+import numpy as np
+star_rating_exe3.select_dtypes(include=[np.number]).dtypes
+
+# String uses
+star_rating_exe3.Organization_Type.str.upper()
+star_rating_exe3.Organization_Type.str.contains('False_data')
+star_rating_exe5=star_rating_exe3.Date.str.replace('28-11-2019','29-11-2019')
+
+#Unique data in the particular coulmns
+star_rating_exe3.Organization_Type.unique()
+star_rating_exe3.Organization_Type.nunique() #to see no of unique values
+pd.crosstab(star_rating_exe3.Contract_Number,star_rating_exe3.Organization_Type)#
+
+#Handling missing values
+star_rating_exe3.isnull().sum() #it tells number of missing values.
+star_rating_exe3['Organization_Type'].value_counts(dropna =False)
+
+#star_rating_exe3 = star_rating_exe3.dropna(how ="all") this will drop only those row whoes all cloumn data is empty.
+#star_rating_exe3 = star_rating_exe3.dropna(thresh=1) it will keep only those rows where atleast one value is present.
+
+
+#Remove Nan values with some values present in that column
+star_rating_exe3['Organization_Type'].fillna(value ='PFFS',inplace = True)
+#star_rating_exe3
+#star_rating_exe3['Organization_Type'].fillna(method="ffill") this will fill the previous column values.
+#star_rating_exe3['Organization_Type'].fillna(method="Bfill")  this will fill the NEXT column value
+#star_rating_exe3['Organization_Type'].fillna(method="Bfill",axis="columns") this will copy columns wise.
+#star_rating_exe3['Organization_Type'].fillna(method="ffill",limit=1) if space is more than 1 it will limit to fill only one cloumn carry forward.
+#star_rating_exe3.interpolate() this will sum the columns and fill in the empty one.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#To identy the exat data
+star_rating_exe6.loc[8,'Organization_Type']
+
+#Changing of Index
+star_rating_exe3.set_index('Date',inplace = false)
+
+#How to give the index name
+star_rating_exe3.index.name ='xyz'
+
+#Reset the index
+star_rating_exe3.reset_index(inplace= True)
+
+#Sorting of index
+star_rating_exe3.Date.value_counts().sort_index()
+
+
+#Diffrence between loc &iloc interger
+star_rating_exe10.loc[star_rating_exe10.Contract_Number =='E3014','Drugperformance']
+
+#iloc
+star_rating_exe10.iloc[0:3, :] #here row 0,1,2 is included but not 3
+#star_rating_exe10
+
+#ix alows mixing of labels and integer very rarely used
+star_rating_exe10 = pd.read_csv(r"C:\\Users\\anuj.gupta04\\Desktop\\personal\\Study\\Book3.csv",index_col='Contract_Number')
+star_rating_exe10.ix['H0602':'H2462',0:2]
+
+#Regex suppose if u have drurperformace = 5kg u need to remove kg then use regex
+star_rating_exe10 = pd.read_csv(r"C:\\Users\\anuj.gupta04\\Desktop\\personal\\Study\\Book3.csv")
+star_rating_exe11 = star_rating_exe10.replace('[A-Za-z]','',regex=True)
+
+#Repalce any value with numeric based on ratings
+star_rating_exe12=star_rating_exe10.Organization_Type.replace(['False_data'],[0])
+
+++++++++++++++++++++++++++++++
+concat  &  Merge
+S= pd.Series(["Bad","average","good","sd","af"],name="Drugperformance")
+sf =pd.concat([star_rating_exe3, S)],axis=1)
+
+start_rating_exe3 = pd.merge(start_rating_exe1,start_rating_exe2,on ="Date")
+start_rating_exe3 = pd.merge(start_rating_exe1,start_rating_exe2,on ="Date",how="outer") //same as joins in sql.
+
+pivot & pivottable - it allow us to summarize and aggregate data inside dataframe.
+star_rating_exe3 .pivot(index="Contract_Number",columns="Date",values ="Drugperformance")
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+skipping the row
+star_rating = pd.read_csv(r"C:\\Users\\anuj.gupta04\\Desktop\\personal\\study\\Book2.csv",skiprows=[0,1])
+
+stack and unstack used when u are working with multiple headers.
+cross tab(x-axis,y-axis,margins =True)
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Location logitude and latitude 
+import geopy
+dir(geopy)
+from geopy.geocoders import Nominatim
+nom = Nominatim()
+n=nom.geocode("534 Schoenborn St #51")
+
+output it will display the full location along with latitude and logitude.
+
+n.latitude
+n.logitude
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Time Series Analysis 
+
+Average stock price of apple
+star_rating["2017-07"].Close.mean()
+
+Average stock price of apple monthly
+star_rating.Close.resample('M').mean()
+#This will give graph plot
+
+%matplotlib inline
+star_rating.Close.resample('M').mean().plot()
+
+Bar plot
+%matplotlib inline
+star_rating.Close.resample('Q').mean().plot(kind ="bar")
+
+#include date cloummn
+star_rating1 =pd.date_range(start="6/1/2017",end="6/30/2017",freq='B') #B is the business day.
+
+#:
+import pandas as pd
+dt = ['2017-01-05 2:30:00 PM', 'Jan 5, 2017 14:30:00', '01/05/2016', '2017.01.05', '2017/01/05','20170105']
+pd.to_datetime(dt)
+
+Out
+DatetimeIndex(['2017-01-05 14:30:00', '2017-01-05 14:30:00',
+               '2016-01-05 00:00:00', '2017-01-05 00:00:00',
+               '2017-01-05 00:00:00', '2017-01-05 00:00:00'],
+              dtype='datetime64[ns]', freq=None)
+
+#Handling invalid dates
+pd.to_datetime(['2017-01-05', 'Jan 6, 2017', 'abc'], errors='ignore')
+out - array(['2017-01-05', 'Jan 6, 2017', 'abc'], dtype=object)
+
+pd.to_datetime(['2017-01-05', 'Jan 6, 2017', 'abc'], errors='coerce')
+out -DatetimeIndex(['2017-01-05', '2017-01-06', 'NaT'], dtype='datetime64[ns]', freq=None
+
+d = pd.Period('2016-02-28', freq='D')
+out Period('2016-02-28', 'D')
+d+1
+out Period('2016-02-29', 'D')
